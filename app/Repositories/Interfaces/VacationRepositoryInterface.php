@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface VacationRepositoryInterface
 {
-    public function findAll(int $limit, int $offset): Collection;
+    public function findAll(array $filters, int $limit, int $offset): Collection;
 
     public function findById(int $id): ?Vacation;
 

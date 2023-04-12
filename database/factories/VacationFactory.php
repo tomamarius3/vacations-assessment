@@ -13,8 +13,8 @@ class VacationFactory extends Factory
      */
     public function definition()
     {
-        $startDate = $this->faker->date();
-        $endDate = $this->faker->date('Y-m-d', $startDate);
+        $endDate = $this->faker->date();
+        $startDate = $this->faker->date('Y-m-d', $endDate);
 
         return [
             'start' => $startDate,

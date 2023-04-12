@@ -5,23 +5,24 @@ namespace App\Repositories;
 use App\Models\Vacation;
 use App\Repositories\Interfaces\VacationRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Spatie\QueryBuilder\QueryBuilder;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VacationRepository implements VacationRepositoryInterface
 {
 
     public function findAll(array $filters, int $limit = 10, int $offset = 0): Collection
     {
-        $vacations = Vacation::limit($limit)
-            ->offset($offset);
+        $vacations = Vacation::query();
+
+        if ($limit > 0) {
+            $vacations = $vacations->limit($limit)->offset($offset);
+        }
 
         foreach ($filters as $field => $filter) {
             $operator = array_key_first($filter);
             $value = $filter[$operator];
-            $vacations = $vacations->where($field, $operator, $value);
+            $vacations = $vacations->where($field, $this->getMappedOperator($operator), $value);
         }
-
-        dd($vacations->getSql());
 
         return $vacations->get();
     }
@@ -52,7 +53,7 @@ class VacationRepository implements VacationRepositoryInterface
         $vacation = $this->findById($id);
 
         if (is_null($vacation)) {
-            throw new \Exception("There is no vacation with id: $id");
+            throw new NotFoundHttpException("There is no vacation with id: $id");
         }
 
         $vacation->start = $data['start'];
@@ -67,7 +68,7 @@ class VacationRepository implements VacationRepositoryInterface
         $vacation = $this->findById($id);
 
         if (is_null($vacation)) {
-            throw new \Exception("There is no vacation with id: $id");
+            throw new NotFoundHttpException("There is no vacation with id: $id");
         }
 
         $vacation->delete();

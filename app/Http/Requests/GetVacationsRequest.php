@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetVacationsRequest extends FormRequest
@@ -16,6 +17,11 @@ class GetVacationsRequest extends FormRequest
         return true;
     }
 
+    public function wantsJson(): bool
+    {
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,13 +31,13 @@ class GetVacationsRequest extends FormRequest
     {
         return [
             'start' => 'array',
-            'start.eq' => 'date|date_format:Y-m-dTH:i:s',
-            'start.lte' => 'date|date_format:Y-m-dTH:i:s',
-            'start.gte' => 'date|date_format:Y-m-dTH:i:s',
+            'start.eq' => 'date',
+            'start.lte' => 'date',
+            'start.gte' => 'date',
             'end' => 'array',
-            'end.eq' => 'date|date_format:Y-m-dTH:i:s',
-            'end.lte' => 'date|date_format:Y-m-dTH:i:s',
-            'end.gte' => 'date|date_format:Y-m-dTH:i:s',
+            'end.eq' => 'date',
+            'end.lte' => 'date',
+            'end.gte' => 'date',
             'price' => 'array',
             'price.eq' => 'numeric',
             'price.lte' => 'numeric',
@@ -42,12 +48,22 @@ class GetVacationsRequest extends FormRequest
     public function getFilters(): array
     {
         return array_filter([
-            'start' => $this->get('start'),
-            'end' => $this->get('end'),
+            'start' => $this->extractDateFromFilter('start'),
+            'end' => $this->extractDateFromFilter('end'),
             'price' => $this->get('price')
         ], function($item) {
             return !is_null($item);
         });
+    }
+
+    private function extractDateFromFilter(string $filterName): ?array
+    {
+        $start = $this->get($filterName);
+        if (!is_null($start)) {
+            $key = array_key_first($start);
+            return [$key => new Carbon($start[$key])];
+        }
+        return null;
     }
 
 }

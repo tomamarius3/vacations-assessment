@@ -17,7 +17,7 @@ class CreateVacationsTable extends Migration
             $table->id();
             $table->timestamp('start');
             $table->timestamp('end');
-            $table->float('price');
+            $table->float('price', 8, 4);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -11,4 +11,6 @@ class Vacation extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $fillable = ['start', 'end', 'price'];
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\VacationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('vacations', [\App\Http\Controllers\VacationController::class, 'index']);
+Route::get('vacations', [VacationController::class, 'index']);
+Route::get('vacations/{id}', [VacationController::class, 'show']);
+Route::post('vacations', [VacationController::class, 'store']);
+Route::put('vacations/{id}', [VacationController::class, 'update']);
+Route::delete('vacations/{id}', [VacationController::class, 'destroy']);

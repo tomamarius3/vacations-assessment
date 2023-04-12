@@ -11,7 +11,12 @@ class StoreVacationRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function wantsJson(): bool
     {
         return true;
     }
@@ -21,10 +26,12 @@ class StoreVacationRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            //
+            'start' => 'required|date',
+            'end' => 'required|date',
+            'price' => 'required|numeric'
         ];
     }
 }

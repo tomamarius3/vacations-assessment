@@ -7,7 +7,9 @@ use App\Models\Vacation;
 use App\Http\Requests\StoreVacationRequest;
 use App\Http\Requests\UpdateVacationRequest;
 use App\Services\VacationService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 class VacationController extends Controller
 {
@@ -18,79 +20,59 @@ class VacationController extends Controller
         $this->vacationService = $vacationService;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(GetVacationsRequest $request)
+    public function index(GetVacationsRequest $request): JsonResponse
     {
-        dd($request->all());
+        return response()->json($this->vacationService->getAllVacations(
+            $request->getFilters(),
+            $request->get('limit', 0),
+            $request->get('offset', 0)
+        ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(StoreVacationRequest $request): JsonResponse
     {
-        //
+        try {
+            $this->vacationService->storeVacation($request->validated());
+        } catch (Throwable $t) {
+            return response()->json($t->getMessage(), 500);
+        }
+
+        return response()->json(null, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreVacationRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreVacationRequest $request)
+    public function show(int $vacationId): JsonResponse
     {
-        //
+        $vacation = $this->vacationService->getVacation($vacationId);
+
+        if (is_null($vacation)) {
+            return response()->json(null, 404);
+        }
+
+        return response()->json($vacation);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Vacation  $vacation
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Vacation $vacation)
+    public function update(UpdateVacationRequest $request, int $vacationId): JsonResponse
     {
-        //
+        try {
+            $this->vacationService->updateVacation($vacationId, $request->validated());
+        } catch(NotFoundHttpException $exception) {
+            return response()->json(null, 404);
+        } catch (Throwable $t) {
+            return response()->json($t->getMessage(), 500);
+        }
+
+        return response()->json();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Vacation  $vacation
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Vacation $vacation)
+    public function destroy(int $vacationId): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateVacationRequest  $request
-     * @param  \App\Models\Vacation  $vacation
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateVacationRequest $request, Vacation $vacation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Vacation  $vacation
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Vacation $vacation)
-    {
-        //
+        try {
+            $this->vacationService->deleteVacation($vacationId);
+        } catch(NotFoundHttpException $exception) {
+            return response()->json(null, 404);
+        } catch (Throwable $t) {
+            return response()->json($t->getMessage(), 500);
+        }
+        return response()->json(null, 200);
     }
 }

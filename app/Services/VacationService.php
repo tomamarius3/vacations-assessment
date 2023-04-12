@@ -17,9 +17,9 @@ class VacationService
         $this->vacationRepository = $vacationRepository;
     }
 
-    public function getAllVacations(int $limit, int $offset): Collection
+    public function getAllVacations(array $filters, int $limit, int $offset): Collection
     {
-        return $this->vacationRepository->findAll($limit, $offset);
+        return $this->vacationRepository->findAll($filters, $limit, $offset);
     }
 
     public function getVacation(int $id): ?Vacation
@@ -29,16 +29,16 @@ class VacationService
 
     public function storeVacation(array $data): void
     {
-
+        $this->vacationRepository->store($data);
     }
 
     public function updateVacation(int $id, array $data): void
     {
-
+        $this->vacationRepository->update($id, $data);
     }
 
     public function deleteVacation(int $id): void
     {
-
+        $this->vacationRepository->delete($id);
     }
 }
