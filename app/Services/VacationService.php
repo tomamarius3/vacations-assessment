@@ -27,9 +27,9 @@ class VacationService
         return $this->vacationRepository->findById($id);
     }
 
-    public function storeVacation(array $data): void
+    public function storeVacation(array $data): Vacation
     {
-        $this->vacationRepository->store($data);
+        return $this->vacationRepository->store($data);
     }
 
     public function updateVacation(int $id, array $data): void

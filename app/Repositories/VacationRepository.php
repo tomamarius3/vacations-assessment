@@ -43,9 +43,9 @@ class VacationRepository implements VacationRepositoryInterface
         return Vacation::find($id);
     }
 
-    public function store(array $data): void
+    public function store(array $data): Vacation
     {
-        Vacation::create($data);
+        return Vacation::create($data);
     }
 
     public function update(int $id, array $data): void

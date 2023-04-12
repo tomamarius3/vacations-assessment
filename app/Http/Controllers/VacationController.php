@@ -32,12 +32,12 @@ class VacationController extends Controller
     public function store(StoreVacationRequest $request): JsonResponse
     {
         try {
-            $this->vacationService->storeVacation($request->validated());
+            $vacation = $this->vacationService->storeVacation($request->validated());
         } catch (Throwable $t) {
             return response()->json($t->getMessage(), 500);
         }
 
-        return response()->json(null, 201);
+        return response()->json($vacation, 201);
     }
 
     public function show(int $vacationId): JsonResponse

@@ -11,7 +11,7 @@ interface VacationRepositoryInterface
 
     public function findById(int $id): ?Vacation;
 
-    public function store(array $data): void;
+    public function store(array $data): Vacation;
 
     public function update(int $id, array $data): void;
 
